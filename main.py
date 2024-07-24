@@ -3,6 +3,8 @@ import socket
 import json
 import sys
 
+with open("env.json") as f: env = json.loads(f.read())
+
 pygame.init()
 info = pygame.display.Info()
 screen = pygame.display.set_mode((info.current_w, info.current_h))
@@ -11,8 +13,6 @@ clock = pygame.time.Clock()
 from world_generation import WorldGeneration, Chunk
 import connection
 import assets
-
-with open("env.json") as f: env = json.loads(f.read())
 
 class GameManager():
     pass
