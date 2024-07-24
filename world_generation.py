@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pygame
 import random
 import assets
@@ -9,27 +11,41 @@ class WorldGeneration():
         self.world: dict = self.generate()
     
     def generate(self) -> dict:
-        world: dict = {}
+        world: list[Chunk] = {}
         
         for x in range(self.world_size):
             for y in range(self.world_size):
-                chunk_id: str = f"{x},{y}"
-                chunk_data: list[int] = self.generate_chunk((x,y))
-                world.update(chunk_id, chunk_data)
+                chunk_data: Chunk = self.generate_chunk((x,y))
+                world.append(chunk_data)
 
         return world
     
-    def generate_chunk(self, chunk_coords) -> list[int]:
-        blocks: list[pygame.Surface] = []
+    def generate_chunk(self, chunk_coords: tuple[int, int]) -> Chunk:
+        absolute_cords = (chunk_coords[0] * self.chunk_size, chunk_coords[1] * self.chunk_size)
+        
+        # for temporary checkerboard
+        color = "black"
+        
+        terrain: list[dict] = []
         for x in range(self.chunk_size):
             for y in range(self.chunk_size):
-                
-                # Checkerboard Pattern
-                y = (x + y) % 2
-                spriteColor: str = "black" if y == 0 else "white"
+                # Flip flop the color for checkerboard (temporary)
+                color: str = "black" if color == "white" else "white"
 
-                spriteName: pygame.Surface = assets.sprites["terrain"][f"checker_{spriteColor}.png"]
-                
-                blocks.append(spriteName)
+                sprite: pygame.Surface = assets.sprites["terrain"][f"checker_{color}.png"]
+
+                block = {
+                    "sprite": sprite,
+                    "position": (absolute_cords[0] + x, absolute_cords[1] + y),
+                }
+
+                terrain.append(block)
         
-        return blocks
+        new_chunk = Chunk(absolute_cords, terrain)
+
+        return new_chunk
+
+class Chunk():
+    def __init__(self, position: tuple[int, int], terrain: list[dict]):
+        self.position = position
+        self.terrain = terrain

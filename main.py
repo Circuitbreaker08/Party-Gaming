@@ -57,16 +57,6 @@ class Button(ButtonPrimitive):
         screen.blit(self.sprite, self.position)
         super().tick()
 
-
-class Chunk():
-    def __init__(self, position: tuple[int, int], terrain: dict[tuple[int, int], dict]):
-        self.position = position
-        self.terrain = terrain
-
-    def tick(self):
-        for entity in self.terrain.values():
-            entity.tick()
-
 chunks = []
 
 ui: list[Button] = [
