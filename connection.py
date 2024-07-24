@@ -36,3 +36,9 @@ class Connection():
     def run_queue(self):
         for func in self.func_queue.values():
             func()
+
+class HostConnection(Connection):
+    pass
+
+class ClientConnection(Connection):
+    pass
