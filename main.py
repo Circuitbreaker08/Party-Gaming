@@ -11,6 +11,17 @@ import world_generation
 import connection
 import assets
 
+class GameManager():
+    pass
+
+class HostGameManager(GameManager):
+    def __init__(self):
+        self.connection = connection.HostConnection()
+
+class ClientGameManager(GameManager):
+    def __tick__(self):
+        self.connection = connection.ClientConnection()
+
 
 class ButtonPrimitive():
     def __init__(self, position: tuple[int, int], size: tuple[int, int], func):
@@ -46,16 +57,7 @@ class Button(ButtonPrimitive):
         screen.blit(self.sprite, self.position)
         super().tick()
 
-
-class Chunk():
-    def __init__(self, position: tuple[int, int], terrain: dict[tuple[int, int], dict]):
-        self.position = position
-        self.terrain = terrain
-
-    def tick(self):
-        for entity in self.terrain.values():
-            entity.tick()
-
+chunks = []
 
 ui: list[Button] = [
     Button((100, 100), (320, 64), assets.sprites["ui"]["join.png"], lambda: print("Join")),
@@ -73,6 +75,9 @@ while running:
             running = False
 
     screen.fill((0, 0, 0))
+
+    for chunk in chunks:
+        chunk.tick()
 
     for element in ui:
         element.tick()
