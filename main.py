@@ -14,6 +14,13 @@ from world_generation import WorldGeneration, Chunk
 import connection
 import assets
 
+IMAGE_SIZE = 64
+
+def lobby_init(is_host):
+    global game_manager
+    if is_host:
+        pass
+
 class GameManager():
     pass
 
@@ -66,9 +73,8 @@ class Button(ButtonPrimitive):
         super().tick()
 
 chunks = []
-image_size = 64
 
-world_generator: WorldGeneration = WorldGeneration(1, 16, image_size) # world is 32 chunks by 32 chunks; chunks are 16x16
+world_generator: WorldGeneration = WorldGeneration(1, 16, IMAGE_SIZE) # world is 32 chunks by 32 chunks; chunks are 16x16
 chunks: list[Chunk] = []
 chunks = world_generator.world # just the entire world for now
 
