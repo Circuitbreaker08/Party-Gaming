@@ -8,7 +8,7 @@ info = pygame.display.Info()
 screen = pygame.display.set_mode((info.current_w, info.current_h))
 clock = pygame.time.Clock()
 
-import world_generation
+from world_generation import WorldGeneration, Chunk
 import connection
 import assets
 
@@ -67,6 +67,20 @@ class Button(ButtonPrimitive):
 
 chunks = []
 
+world_generator: WorldGeneration = WorldGeneration(32, 16) # world is 32 chunks by 32 chunks; chunks are 16x16
+chunks: list[Chunk] = []
+chunks = world_generator.world # just the entire world for now
+
+def renderChunks(screen: pygame.Surface):
+    for chunk in chunks:
+        chunk_position: tuple[int, int] = chunk.position
+        chunk_terrain: list[dict] = chunk.terrain
+        for terrain in chunk_terrain:
+            sprite = terrain["sprite"]
+            sprite_position = terrain["position"]
+            screen.blit(sprite, sprite_position)
+
+
 ui: list[Button] = [
     Button((100, 100), (320, 64), assets.sprites["ui"]["join.png"], lambda: print("Join")),
     Button((100, 200), (320, 64), assets.sprites["ui"]["host.png"], lambda: print("Host"))
@@ -84,8 +98,7 @@ while running:
 
     screen.fill((0, 0, 0))
 
-    for chunk in chunks:
-        chunk.tick()
+    renderChunks(screen)
 
     for element in ui:
         element.tick()

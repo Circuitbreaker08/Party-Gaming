@@ -8,10 +8,10 @@ class WorldGeneration():
     def __init__(self, world_size: int = 16, chunk_size: int = 16) -> None:
         self.chunk_size: int = chunk_size
         self.world_size: int = world_size
-        self.world: dict = self.generate()
+        self.world: list[Chunk] = self.generate()
     
-    def generate(self) -> dict:
-        world: list[Chunk] = {}
+    def generate(self) -> list[Chunk]:
+        world: list[Chunk] = []
         
         for x in range(self.world_size):
             for y in range(self.world_size):
@@ -47,5 +47,5 @@ class WorldGeneration():
 
 class Chunk():
     def __init__(self, position: tuple[int, int], terrain: list[dict]):
-        self.position = position
-        self.terrain = terrain
+        self.position: tuple[int, int] = position
+        self.terrain: list[dict] = terrain
