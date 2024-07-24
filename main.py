@@ -47,16 +47,6 @@ class Button(ButtonPrimitive):
         super().tick()
 
 
-class Chunk():
-    def __init__(self, position: tuple[int, int], terrain: dict[tuple[int, int], dict]):
-        self.position = position
-        self.terrain = terrain
-
-    def tick(self):
-        for entity in self.terrain.values():
-            entity.tick()
-
-
 ui: list[Button] = [
     Button((100, 100), (320, 64), assets.sprites["ui"]["join.png"], lambda: print("Join")),
     Button((100, 200), (320, 64), assets.sprites["ui"]["host.png"], lambda: print("Host"))
