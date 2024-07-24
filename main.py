@@ -27,6 +27,7 @@ class HostGameManager(GameManager):
 class ClientGameManager(GameManager):
     def __tick__(self):
         self.s = socket.socket()
+        self.s.connect((env["IP"], env["PORT"]))
         self.connection = connection.ClientConnection(self.s)
 
 
