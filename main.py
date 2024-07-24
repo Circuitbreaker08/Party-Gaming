@@ -1,5 +1,6 @@
 import pygame
 import socket
+import json
 import sys
 
 pygame.init()
@@ -11,16 +12,22 @@ import world_generation
 import connection
 import assets
 
+with open("env.json") as f: env = json.loads(f.read())
+
 class GameManager():
     pass
 
 class HostGameManager(GameManager):
     def __init__(self):
-        self.connection = connection.HostConnection()
+        self.s = socket.socket()
+        self.s.bind("", env["PORT"])
+        self.s.listen()
+        self.connection = connection.HostConnection(self.s)
 
 class ClientGameManager(GameManager):
     def __tick__(self):
-        self.connection = connection.ClientConnection()
+        self.s = socket.socket()
+        self.connection = connection.ClientConnection(self.s)
 
 
 class ButtonPrimitive():
