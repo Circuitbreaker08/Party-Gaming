@@ -71,7 +71,7 @@ world_generator: WorldGeneration = WorldGeneration(32, 16) # world is 32 chunks 
 chunks: list[Chunk] = []
 chunks = world_generator.world # just the entire world for now
 
-def renderChunks(screen: pygame.Surface):
+def render_chunks(screen: pygame.Surface):
     for chunk in chunks:
         chunk_position: tuple[int, int] = chunk.position
         chunk_terrain: list[dict] = chunk.terrain
@@ -98,7 +98,7 @@ while running:
 
     screen.fill((0, 0, 0))
 
-    renderChunks(screen)
+    render_chunks(screen)
 
     for element in ui:
         element.tick()
