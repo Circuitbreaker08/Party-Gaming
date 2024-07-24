@@ -7,6 +7,8 @@ info = pygame.display.Info()
 screen = pygame.display.set_mode((info.current_w, info.current_h))
 clock = pygame.time.Clock()
 
+import assets
+
 running = True
 while running:
     events = pygame.event.get()
