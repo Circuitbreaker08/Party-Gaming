@@ -1,4 +1,6 @@
+import pygame
 import random
+import assets
 
 class WorldGeneration():
     def __init__(self, world_size: int = 16, chunk_size: int = 16) -> None:
@@ -18,13 +20,16 @@ class WorldGeneration():
         return world
     
     def generate_chunk(self, chunk_coords) -> list[int]:
-        blocks: list[int] = []
+        blocks: list[pygame.Surface] = []
         for x in range(self.chunk_size):
             for y in range(self.chunk_size):
                 
                 # Checkerboard Pattern
                 y = (x + y) % 2
+                spriteColor: str = "black" if y == 0 else "white"
+
+                spriteName: pygame.Surface = assets.sprites["terrain"][f"checker_{spriteColor}.png"]
                 
-                blocks.append(y)
+                blocks.append(spriteName)
         
         return blocks
