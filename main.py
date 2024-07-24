@@ -7,8 +7,9 @@ info = pygame.display.Info()
 screen = pygame.display.set_mode((info.current_w, info.current_h))
 clock = pygame.time.Clock()
 
-import assets
+import world_generation
 import connection
+import assets
 
 
 class ButtonPrimitive():
@@ -44,6 +45,16 @@ class Button(ButtonPrimitive):
     def tick(self):
         screen.blit(self.sprite, self.position)
         super().tick()
+
+
+class Chunk():
+    def __init__(self, position: tuple[int, int], terrain: dict[tuple[int, int], dict]):
+        self.position = position
+        self.terrain = terrain
+
+    def tick(self):
+        for entity in self.terrain.values():
+            entity.tick()
 
 
 ui: list[Button] = [
