@@ -41,7 +41,6 @@ class HostGameManager(GameManager):
         global ui
         self.playing = False
         self.player = Player()
-        players.append(self.player)
         self.player.change_name(env["NAME"])
         self.players: list[connection.HostConnection] = []
 
@@ -54,6 +53,7 @@ class HostGameManager(GameManager):
 
     def tick(self):
         self.player.move((keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w]))
+        #print([x.player.position for x in self.players], end="\r")
 
     def connection_accept(self):
         while True:
@@ -85,7 +85,7 @@ class ClientGameManager(GameManager):
         self.send({"type": "name_register", "body": env["NAME"]})
 
     def tick(self):
-        self.send({"type": "input", "body": [keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w]]})
+        self.send({"type": "player_input", "body": [keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w]]})
 
     def send(self, data):
         self.s.send(f"{json.dumps(data)}§".encode())
@@ -192,8 +192,6 @@ while running:
 
     for element in ui:
         element.tick()
-
-    print([x.position for x in players], end="\r")
 
     pygame.display.flip()
     clock.tick(60)

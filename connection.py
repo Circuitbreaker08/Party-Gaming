@@ -40,6 +40,8 @@ class Connection():
             func()
 
 class HostConnection(Connection):
+    queue_funcs = ["player_input"]
+
     def __init__(self, c: socket.socket, player):
         self.player = player
         super().__init__(c)
@@ -47,7 +49,8 @@ class HostConnection(Connection):
     def name_register(self, data):
         print(data["body"])
 
-    def input(self, data):
+    def player_input(self, data):
+        print(data)
         self.player.move((data["body"]))
 
 class ClientConnection(Connection):
