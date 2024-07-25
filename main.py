@@ -58,9 +58,12 @@ class HostGameManager(GameManager):
             connection.HostConnection(c)
 
     def start_game(self):
-        global in_game
+        global in_game, chunks
         in_game = True
+        chunks = generate_world()
+        
         ui = []
+        self.send({"type": "load_chunks", "chunks": chunks})
         self.send({"type": "start_game"})
 
 class ClientGameManager(GameManager):
@@ -120,11 +123,13 @@ def render_chunks(screen: pygame.Surface) -> None:
         chunk_terrain: list[dict] = chunk.terrain
         chunk_entities: list[dict] = chunk.entities
         for terrain in chunk_terrain:
-            sprite = terrain["sprite"]
+            spritePath = terrain["sprite"]
+            sprite = assets.sprites[spritePath[0]][spritePath[1]]
             sprite_position = terrain["position"]
             screen.blit(sprite, sprite_position)
         for entity in chunk_entities:
-            sprite = entity["sprite"]
+            spritePath = terrain["sprite"]
+            sprite = assets.sprites[spritePath[0]][spritePath[1]]
             sprite_position = entity["position"]
             screen.blit(sprite, sprite_position)
 

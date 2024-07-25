@@ -5,7 +5,7 @@ import pygame
 import random
 import assets
 import time
-
+import json
 
 class WorldGeneration():
     def __init__(self, world_size: int = 16, chunk_size: int = 16, image_size: int = 64) -> None:
@@ -64,12 +64,12 @@ class WorldGeneration():
                         "is_passable": False
                     }
                     tree_middle1 = {
-                        "sprite": assets.sprites["terrain"]["checker_black.png"],
+                        "sprite": ["terrain", "checker_black.png"],
                         "position": absolute_position,
                         "is_passable": True
                     }
                     tree_top = {
-                        "sprite": assets.sprites["terrain"]["checker_black.png"],
+                        "sprite": ["terrain", "checker_black.png"],
                         "position": absolute_position,
                         "is_passable": True
                     }
@@ -86,7 +86,16 @@ class WorldGeneration():
         return new_chunk
 
 class Chunk():
-    def __init__(self, position: tuple[int, int], terrain: list[dict], entites: list[dict]):
+    def __init__(self, position: tuple[int, int] = (-1,-1), terrain: list[dict] = [], entites: list[dict] = []):
         self.position: tuple[int, int] = position
         self.terrain: list[dict] = terrain
         self.entities: list[dict] = entites
+    
+    def load_from_string(self, string):
+        splits = string.split("\n")
+        self.position = tuple(splits)
+        self.terrain = json.loads(splits[1])
+        self.entities = json.loads(splits[2])
+
+    def __str__(self) -> str:
+        return f"{self.position}\n{json.dumps(self.terrain)}\n{json.dumps(self.entities)}"

@@ -45,3 +45,6 @@ class HostConnection(Connection):
 class ClientConnection(Connection):
     def start_game(self, data):
         setattr(sys.modules["__main__"], "in_game", True)
+    
+    def load_chunks(self, data):
+        pass
