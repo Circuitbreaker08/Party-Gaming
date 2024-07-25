@@ -36,7 +36,7 @@ class GameManager():
         pass
 
     def send(self, data):
-        self.s.send(json.dumps(data).encode())
+        self.s.send(f"{json.dumps(data).encode()}§")
 
 class HostGameManager(GameManager):
     def __init__(self):
