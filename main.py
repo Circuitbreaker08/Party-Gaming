@@ -35,6 +35,9 @@ class GameManager():
     def tick(self):
         pass
 
+    def send(self, data):
+        self.s.send(json.dumps(data).encode())
+
 class HostGameManager(GameManager):
     def __init__(self):
         self.s = socket.socket()
@@ -53,6 +56,7 @@ class ClientGameManager(GameManager):
         self.s = socket.socket()
         self.s.connect((env["IP"], env["PORT"]))
         self.connection = connection.ClientConnection(self.s)
+        self.send({"type": "name_register", "body": env["NAME"]})
 
 
 class ButtonPrimitive():
