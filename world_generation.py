@@ -59,7 +59,7 @@ class WorldGeneration():
 
                 if sprite_name == "grass" and random.randrange(0, self.tree_frequency) == 0:
                     tree_stump = {
-                        "sprite": assets.sprites["terrain"]["CrappyTree.png"],
+                        "sprite": ["terrain", "CrappyTree.png"],
                         "position": absolute_position,
                         "is_passable": False
                     }
