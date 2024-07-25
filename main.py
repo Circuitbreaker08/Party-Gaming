@@ -75,7 +75,7 @@ class HostGameManager(GameManager):
         ui = []
         for player in self.players:
             self.send(player, {"type": "start_game"})
-            #self.send(player, {"type": "load_chunks", "body": chunks_string_list})
+            self.send(player, {"type": "load_chunks", "body": chunks_string_list})
 
 class ClientGameManager(GameManager):
     def __init__(self):

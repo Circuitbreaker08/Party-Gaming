@@ -60,9 +60,9 @@ class ClientConnection(Connection):
     def load_chunks(self, data):
         print("load chunks from strings and stuff")
         chunks = []
-        print(data)
-        for chunk_string in data:
-            print(chunk_string)
+        #print(data)
+        for chunk_string in data['body']:
+            #print(chunk_string)
             new_chunk = Chunk()
             new_chunk.load_from_string(chunk_string)
             chunks.append(new_chunk)

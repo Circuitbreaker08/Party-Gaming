@@ -93,7 +93,8 @@ class Chunk():
     
     def load_from_string(self, string):
         splits = string.split("\n")
-        print(string, splits, len(splits))
+        #print(splits, len(splits))
+        #print(type(string), type(splits))
         self.position = tuple(splits[0])
         self.terrain = json.loads(splits[1])
         self.entities = json.loads(splits[2])
