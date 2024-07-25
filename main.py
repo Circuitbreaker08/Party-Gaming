@@ -54,7 +54,7 @@ class HostGameManager(GameManager):
             print(f"Accepted connection from {addr}")
             self.players.append(connection.HostConnection(c))
 
-    def send(self, c: socket.socket, data):
+    def send(self, c: connection.HostConnection, data):
         c.c.send(f"{json.dumps(data)}§".encode())
 
     def start_game(self):
@@ -64,7 +64,6 @@ class HostGameManager(GameManager):
         
         ui = []
         for player in self.players:
-            self.send({"type": "load_chunks", "chunks": chunks})
             self.send(player, {"type": "start_game"})
 
 class ClientGameManager(GameManager):
@@ -113,6 +112,12 @@ class Button(ButtonPrimitive):
         super().tick()
 
 
+class Player():
+    def __init__(self, name):
+        self.position = [0, 0]
+        self.name = name
+
+
 chunks: list[Chunk] = []
 
 def generate_world() -> list[Chunk]:
@@ -143,6 +148,8 @@ ui: list[Button] = [
     Button((100, 100), (320, 64), assets.sprites["ui"]["join.png"], lambda: lobby_init(False)),
     Button((100, 200), (320, 64), assets.sprites["ui"]["host.png"], lambda: lobby_init(True))
 ]
+
+players: list[Player] = []
 
 running = True
 while running:
