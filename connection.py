@@ -49,9 +49,8 @@ class ClientConnection(Connection):
     
     def load_chunks(self, data):
         print("load chunks from strings and stuff")
-        chunks_string = json.loads(data)
         chunks = []
-        for chunk_string in chunks_string:
+        for chunk_string in data:
             new_chunk = Chunk()
             new_chunk.load_from_string(chunk_string)
             chunks.append(new_chunk)

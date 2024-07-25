@@ -49,7 +49,7 @@ class WorldGeneration():
                 sprite_name = "grass"
                 if value_at_position <= self.water_frequency - 0.5: sprite_name = "water"
 
-                sprite: pygame.Surface = ["terrain", "{sprite_name}.png"]
+                sprite: pygame.Surface = ["terrain", f"{sprite_name}.png"]
 
                 block = {
                     "sprite": sprite,
