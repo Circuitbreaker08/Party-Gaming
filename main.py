@@ -25,7 +25,6 @@ import assets
 
 def lobby_init(is_host):
     global game_manager, ui
-    print(is_host)
     ui = []
     if is_host:
         game_manager = HostGameManager()
@@ -36,13 +35,11 @@ class GameManager():
     def tick(self):
         pass
 
-    def send(self, data):
-        self.s.send(f"{json.dumps(data)}§".encode())
-
 class HostGameManager(GameManager):
     def __init__(self):
         global ui
         self.playing = False
+        self.players: list[connection.HostConnection] = []
 
         self.s = socket.socket()
         self.s.bind(("", env["PORT"]))
@@ -55,7 +52,10 @@ class HostGameManager(GameManager):
         while True:
             c, addr = self.s.accept()
             print(f"Accepted connection from {addr}")
-            connection.HostConnection(c)
+            self.players.append(connection.HostConnection(c))
+
+    def send(self, c: socket.socket, data):
+        c.c.send(f"{json.dumps(data)}§".encode())
 
     def start_game(self):
         global in_game, chunks
@@ -63,8 +63,9 @@ class HostGameManager(GameManager):
         chunks = generate_world()
         
         ui = []
-        self.send({"type": "load_chunks", "chunks": chunks})
-        self.send({"type": "start_game"})
+        for player in self.players:
+            self.send({"type": "load_chunks", "chunks": chunks})
+            self.send(player, {"type": "start_game"})
 
 class ClientGameManager(GameManager):
     def __init__(self):
@@ -72,6 +73,9 @@ class ClientGameManager(GameManager):
         self.s.connect((env["IP"], env["PORT"]))
         self.connection = connection.ClientConnection(self.s)
         self.send({"type": "name_register", "body": env["NAME"]})
+
+    def send(self, data):
+        self.s.send(f"{json.dumps(data)}§".encode())
 
 
 class ButtonPrimitive():
