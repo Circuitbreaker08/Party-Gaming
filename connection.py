@@ -38,7 +38,9 @@ class Connection():
             func()
 
 class HostConnection(Connection):
-    pass
+    def name_register(self, data):
+        print(data["body"])
 
 class ClientConnection(Connection):
-    pass
+    def __main_error__(self):
+        raise Exception()
