@@ -16,6 +16,7 @@ screen = pygame.display.set_mode((info.current_w, info.current_h))
 clock = pygame.time.Clock()
 
 game_manager: None | HostGameManager | ClientGameManager = None
+in_game = False
 
 from world_generation import WorldGeneration, Chunk
 import connection
@@ -40,16 +41,26 @@ class GameManager():
 
 class HostGameManager(GameManager):
     def __init__(self):
+        global ui
+        self.playing = False
+
         self.s = socket.socket()
         self.s.bind(("", env["PORT"]))
         self.s.listen()
         threading.Thread(target=self.connection_accept).start()
+
+        ui = [Button((100, 100), (320, 64), assets.sprites["ui"]["start.png"], self.start_game)]
 
     def connection_accept(self):
         while True:
             c, addr = self.s.accept()
             print(f"Accepted connection from {addr}")
             connection.HostConnection(c)
+
+    def start_game(self):
+        global in_game
+        in_game = True
+        ui = []
 
 class ClientGameManager(GameManager):
     def __init__(self):
@@ -137,7 +148,9 @@ while running:
     if game_manager != None:
         game_manager.tick()
 
-    render_chunks(screen)
+    if in_game:
+
+        render_chunks(screen)
 
     for element in ui:
         element.tick()
