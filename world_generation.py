@@ -6,21 +6,11 @@ import random
 import assets
 import time
 
-def translate(value, leftMin, leftMax, rightMin, rightMax):
-    # Figure out how 'wide' each range is
-    leftSpan = leftMax - leftMin
-    rightSpan = rightMax - rightMin
-
-    # Convert the left range into a 0-1 range (float)
-    valueScaled = float(value - leftMin) / float(leftSpan)
-
-    # Convert the 0-1 range into a value in the right range.
-    return rightMin + (valueScaled * rightSpan)
 
 class WorldGeneration():
     def __init__(self, world_size: int = 16, chunk_size: int = 16, image_size: int = 64) -> None:
-        self.noise = PerlinNoise(10, time.time_ns())
-        self.water_frequency = 0.35
+        self.noise = PerlinNoise(5, time.time_ns())
+        self.water_frequency = 0.3
         
         self.chunk_size: int = chunk_size
         self.world_size: int = world_size
@@ -44,21 +34,19 @@ class WorldGeneration():
         # for temporary checkerboard
         color = "grass"
         
+        max_perlin_position = self.world_size * self.chunk_size
+
         terrain: list[dict] = []
+        entities: list[dict] = []
         for x in range(self.chunk_size):
             for y in range(self.chunk_size):
                 absolute_position = (absolute_cords[0] * self.image_size + x * self.image_size, absolute_cords[1] * self.image_size + y * self.image_size)
 
                 perlin_position = (chunk_coords[0] * self.chunk_size + x, chunk_coords[1] * self.chunk_size + y)
-                #print(perlin_position)
 
-                #print(self.global_x / self.global_axis_size)
-                #print(self.global_y / self.global_axis_size)
-
-                #value_at_position = self.noise([absolute_position[0]/absolute_position_max[0], absolute_position[1]/absolute_position_max[1]])
-                #sigmoid_value = translate(value_at_position, -0.5, 1, 0, 1)
+                value_at_position = self.noise([perlin_position[0]/max_perlin_position, perlin_position[1]/max_perlin_position])
                 sprite_name = "grass"
-                #if sigmoid_value < self.water_frequency: sprite_name = "water"
+                if value_at_position < self.water_frequency - 0.5: sprite_name = "water"
 
                 sprite: pygame.Surface = assets.sprites["terrain"][f"{sprite_name}.png"]
 
@@ -67,6 +55,23 @@ class WorldGeneration():
                     "position": absolute_position,
                     "is_passable": True
                 }
+
+                if sprite_name == "grass":
+                    tree_stump = {
+                        "sprite": assets.sprites["terrain"]["checker_white.png"],
+                        "position": absolute_position,
+                        "is_passable": False
+                    }
+                    tree_middle1 = {
+                        "sprite": assets.sprites["terrain"]["checker_black.png"],
+                        "position": absolute_position,
+                        "is_passable": True
+                    }
+                    tree_top = {
+                        "sprite": assets.sprites["terrain"]["checker_black.png"],
+                        "position": absolute_position,
+                        "is_passable": True
+                    }
 
                 terrain.append(block)
             
@@ -77,6 +82,7 @@ class WorldGeneration():
         return new_chunk
 
 class Chunk():
-    def __init__(self, position: tuple[int, int], terrain: list[dict]):
+    def __init__(self, position: tuple[int, int], terrain: list[dict], entites: list[dict]):
         self.position: tuple[int, int] = position
         self.terrain: list[dict] = terrain
+        self.entities: list[dict] = entites

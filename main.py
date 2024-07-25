@@ -93,6 +93,8 @@ class Button(ButtonPrimitive):
         screen.blit(self.sprite, self.position)
         super().tick()
 
+
+
 chunks = []
 
 world_generator: WorldGeneration = WorldGeneration(2, 16, IMAGE_SIZE) # world is 32 chunks by 32 chunks; chunks are 16x16
@@ -107,6 +109,7 @@ def render_chunks(screen: pygame.Surface):
             sprite = terrain["sprite"]
             sprite_position = terrain["position"]
             screen.blit(sprite, sprite_position)
+
 
 
 ui: list[Button] = [
