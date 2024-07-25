@@ -11,6 +11,7 @@ class WorldGeneration():
     def __init__(self, world_size: int = 16, chunk_size: int = 16, image_size: int = 64) -> None:
         self.noise = PerlinNoise(5, time.time_ns())
         self.water_frequency = 0.3
+        self.tree_frequency = 7 # 1 / tree_frequency
         
         self.chunk_size: int = chunk_size
         self.world_size: int = world_size
@@ -46,7 +47,7 @@ class WorldGeneration():
 
                 value_at_position = self.noise([perlin_position[0]/max_perlin_position, perlin_position[1]/max_perlin_position])
                 sprite_name = "grass"
-                if value_at_position < self.water_frequency - 0.5: sprite_name = "water"
+                if value_at_position <= self.water_frequency - 0.5: sprite_name = "water"
 
                 sprite: pygame.Surface = assets.sprites["terrain"][f"{sprite_name}.png"]
 
@@ -56,9 +57,9 @@ class WorldGeneration():
                     "is_passable": sprite_name == "grass"
                 }
 
-                if sprite_name == "grass":
+                if sprite_name == "grass" and random.randrange(0, self.tree_frequency) == 0:
                     tree_stump = {
-                        "sprite": assets.sprites["terrain"]["checker_white.png"],
+                        "sprite": assets.sprites["terrain"]["CrappyTree.png"],
                         "position": absolute_position,
                         "is_passable": False
                     }
@@ -73,8 +74,8 @@ class WorldGeneration():
                         "is_passable": True
                     }
                     entities.append(tree_stump)
-                    entities.append(tree_middle1)
-                    entities.append(tree_top)
+                    #entities.append(tree_middle1)
+                    #entities.append(tree_top)
 
                 terrain.append(block)
             
