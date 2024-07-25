@@ -94,14 +94,15 @@ class Button(ButtonPrimitive):
         super().tick()
 
 
-
-chunks = []
-
-world_generator: WorldGeneration = WorldGeneration(2, 16, IMAGE_SIZE) # world is 32 chunks by 32 chunks; chunks are 16x16
 chunks: list[Chunk] = []
-chunks = world_generator.world # just the entire world for now
 
-def render_chunks(screen: pygame.Surface):
+def generate_world() -> list[Chunk]:
+    world_generator: WorldGeneration = WorldGeneration(2, 16, IMAGE_SIZE) # world is 32 chunks by 32 chunks; chunks are 16x16
+    return world_generator.world # just the entire world for now
+
+#chunks = generate_world()
+
+def render_chunks(screen: pygame.Surface) -> None:
     for chunk in chunks:
         chunk_position: tuple[int, int] = chunk.position
         chunk_terrain: list[dict] = chunk.terrain
