@@ -137,7 +137,6 @@ def render_chunks(screen: pygame.Surface) -> None:
         chunk_entities: list[dict] = chunk.entities
         for terrain in chunk_terrain:
             spritePath = terrain["sprite"]
-            print(spritePath)
             sprite = assets.sprites[spritePath[0]][spritePath[1]]
             sprite_position = terrain["position"]
             screen.blit(sprite, sprite_position)
