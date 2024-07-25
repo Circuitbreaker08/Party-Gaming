@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import threading
 import pygame
 import socket
 import json
@@ -5,31 +8,45 @@ import sys
 
 with open("env.json") as f: env = json.loads(f.read())
 
+IMAGE_SIZE = 64
+
 pygame.init()
 info = pygame.display.Info()
 screen = pygame.display.set_mode((info.current_w, info.current_h))
 clock = pygame.time.Clock()
 
+game_manager: None | HostGameManager | ClientGameManager = None
+
 from world_generation import WorldGeneration, Chunk
 import connection
 import assets
 
-IMAGE_SIZE = 64
 
 def lobby_init(is_host):
-    global game_manager
+    global game_manager, ui
+    print(0)
+    ui = []
     if is_host:
-        pass
+        game_manager = HostGameManager()
+    else:
+        game_manager = ClientGameManager()
 
 class GameManager():
-    pass
+    def tick(self):
+        pass
 
 class HostGameManager(GameManager):
     def __init__(self):
         self.s = socket.socket()
-        self.s.bind("", env["PORT"])
+        self.s.bind(("", env["PORT"]))
         self.s.listen()
-        self.connection = connection.HostConnection(self.s)
+        threading.Thread(target=self.connection_accept).start()
+
+    def connection_accept(self):
+        while True:
+            c, addr = self.s.accept()
+            print(f"Accepted connection from {addr}")
+            connection.HostConnection(c)
 
 class ClientGameManager(GameManager):
     def __tick__(self):
@@ -45,7 +62,7 @@ class ButtonPrimitive():
         self.func = func
 
     def tick(self):
-        if mouse[0] > self.position[0] and mouse[1] > self.position[1] and mouse[0] < self.position[0] + self.size[0] and mouse[1] < self.position[1] + self.size[1] and mouse[0]:
+        if mouse[0] > self.position[0] and mouse[1] > self.position[1] and mouse[0] < self.position[0] + self.size[0] and mouse[1] < self.position[1] + self.size[1] and mouse_pressed[0]:
             self.func()
 
 
@@ -89,8 +106,8 @@ def render_chunks(screen: pygame.Surface):
 
 
 ui: list[Button] = [
-    Button((100, 100), (320, 64), assets.sprites["ui"]["join.png"], lambda: print("Join")),
-    Button((100, 200), (320, 64), assets.sprites["ui"]["host.png"], lambda: print("Host"))
+    Button((100, 100), (320, 64), assets.sprites["ui"]["join.png"], lambda: lobby_init(False)),
+    Button((100, 200), (320, 64), assets.sprites["ui"]["host.png"], lambda: lobby_init(True))
 ]
 
 running = True
@@ -104,6 +121,9 @@ while running:
             running = False
 
     screen.fill((0, 0, 0))
+
+    if game_manager != None:
+        game_manager.tick()
 
     render_chunks(screen)
 
