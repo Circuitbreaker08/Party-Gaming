@@ -61,6 +61,7 @@ class HostGameManager(GameManager):
         global in_game
         in_game = True
         ui = []
+        self.send({"type": "start_game"})
 
 class ClientGameManager(GameManager):
     def __init__(self):

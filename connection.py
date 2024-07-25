@@ -3,6 +3,7 @@ from __future__ import annotations
 import threading
 import socket
 import json
+import sys
 
 class Connection():
     queue_funcs: list[str] = []
@@ -42,5 +43,5 @@ class HostConnection(Connection):
         print(data["body"])
 
 class ClientConnection(Connection):
-    def __main_error__(self):
-        pass
+    def start_game(self, data):
+        setattr(sys.modules["__main__"], "in_game", True)
