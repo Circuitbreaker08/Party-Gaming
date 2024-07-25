@@ -85,7 +85,7 @@ class ClientGameManager(GameManager):
         self.send({"type": "name_register", "body": env["NAME"]})
 
     def tick(self):
-        self.connection.player.move((keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w]))
+        self.send({"type": "input", "body": [keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w]]})
 
     def send(self, data):
         self.s.send(f"{json.dumps(data)}§".encode())
