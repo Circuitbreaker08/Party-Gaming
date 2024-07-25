@@ -105,9 +105,14 @@ def render_chunks(screen: pygame.Surface):
     for chunk in chunks:
         chunk_position: tuple[int, int] = chunk.position
         chunk_terrain: list[dict] = chunk.terrain
+        chunk_entities: list[dict] = chunk.entities
         for terrain in chunk_terrain:
             sprite = terrain["sprite"]
             sprite_position = terrain["position"]
+            screen.blit(sprite, sprite_position)
+        for entity in chunk_entities:
+            sprite = entity["sprite"]
+            sprite_position = entity["position"]
             screen.blit(sprite, sprite_position)
 
 

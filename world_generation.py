@@ -53,7 +53,7 @@ class WorldGeneration():
                 block = {
                     "sprite": sprite,
                     "position": absolute_position,
-                    "is_passable": True
+                    "is_passable": sprite_name == "grass"
                 }
 
                 if sprite_name == "grass":
@@ -72,12 +72,15 @@ class WorldGeneration():
                         "position": absolute_position,
                         "is_passable": True
                     }
+                    entities.append(tree_stump)
+                    entities.append(tree_middle1)
+                    entities.append(tree_top)
 
                 terrain.append(block)
             
             color: str = "grass" if color == "water" else "water"
 
-        new_chunk = Chunk(absolute_cords, terrain)
+        new_chunk = Chunk(absolute_cords, terrain, entities)
 
         return new_chunk
 
