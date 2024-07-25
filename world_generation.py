@@ -50,7 +50,7 @@ class WorldGeneration():
                 absolute_position = (absolute_cords[0] * self.image_size + x * self.image_size, absolute_cords[1] * self.image_size + y * self.image_size)
 
                 perlin_position = (chunk_coords[0] * self.chunk_size + x, chunk_coords[1] * self.chunk_size + y)
-                print(perlin_position)
+                #print(perlin_position)
 
                 #print(self.global_x / self.global_axis_size)
                 #print(self.global_y / self.global_axis_size)

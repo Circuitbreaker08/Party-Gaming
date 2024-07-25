@@ -24,7 +24,7 @@ import assets
 
 def lobby_init(is_host):
     global game_manager, ui
-    print(0)
+    print(is_host)
     ui = []
     if is_host:
         game_manager = HostGameManager()
