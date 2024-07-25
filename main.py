@@ -91,7 +91,7 @@ class Button(ButtonPrimitive):
 
 chunks = []
 
-world_generator: WorldGeneration = WorldGeneration(1, 16, IMAGE_SIZE) # world is 32 chunks by 32 chunks; chunks are 16x16
+world_generator: WorldGeneration = WorldGeneration(2, 16, IMAGE_SIZE) # world is 32 chunks by 32 chunks; chunks are 16x16
 chunks: list[Chunk] = []
 chunks = world_generator.world # just the entire world for now
 
