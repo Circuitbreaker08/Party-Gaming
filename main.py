@@ -49,7 +49,7 @@ class HostGameManager(GameManager):
             connection.HostConnection(c)
 
 class ClientGameManager(GameManager):
-    def __tick__(self):
+    def __init__(self):
         self.s = socket.socket()
         self.s.connect((env["IP"], env["PORT"]))
         self.connection = connection.ClientConnection(self.s)
