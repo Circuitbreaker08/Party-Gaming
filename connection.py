@@ -43,4 +43,4 @@ class HostConnection(Connection):
 
 class ClientConnection(Connection):
     def __main_error__(self):
-        raise Exception()
+        pass
