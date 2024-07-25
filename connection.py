@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from world_generation import Chunk
 import threading
 import socket
 import json
@@ -47,4 +48,11 @@ class ClientConnection(Connection):
         setattr(sys.modules["__main__"], "in_game", True)
     
     def load_chunks(self, data):
-        pass
+        print("load chunks from strings and stuff")
+        chunks_string = json.loads(data)
+        chunks = []
+        for chunk_string in chunks_string:
+            new_chunk = Chunk()
+            new_chunk.load_from_string(chunk_string)
+            chunks.append(new_chunk)
+        setattr(sys.modules["__main__"], "chunks", chunks)
