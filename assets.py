@@ -12,4 +12,4 @@ for directory in os.listdir():
     sprites.update({directory: {}})
     os.chdir(os.path.join(root, "assets/sprites", directory))
     for file in os.listdir():
-        sprites[directory].update({file: pygame.image.load(file).convert()})
+        sprites[directory].update({file: pygame.image.load(file).convert_alpha()})
