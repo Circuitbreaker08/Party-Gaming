@@ -39,7 +39,7 @@ class HostGameManager(GameManager):
     def __init__(self):
         global ui
         self.playing = False
-        self.players = []
+        self.players: list[connection.HostConnection] = []
 
         self.s = socket.socket()
         self.s.bind(("", env["PORT"]))
@@ -55,7 +55,7 @@ class HostGameManager(GameManager):
             self.players.append(connection.HostConnection(c))
 
     def send(self, c: socket.socket, data):
-        c.send(f"{json.dumps(data)}§".encode())
+        c.c.send(f"{json.dumps(data)}§".encode())
 
     def start_game(self):
         global in_game
