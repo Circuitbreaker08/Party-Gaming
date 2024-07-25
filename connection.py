@@ -40,8 +40,15 @@ class Connection():
             func()
 
 class HostConnection(Connection):
+    def __init__(self, c: socket.socket, player):
+        self.player = player
+        super().__init__(c)
+
     def name_register(self, data):
         print(data["body"])
+
+    def input(self, data):
+        self.player.move((data["body"]))
 
 class ClientConnection(Connection):
     def start_game(self, data):

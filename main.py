@@ -17,28 +17,32 @@ clock = pygame.time.Clock()
 
 game_manager: None | HostGameManager | ClientGameManager = None
 in_game = False
+is_host = False
 
 from world_generation import WorldGeneration, Chunk
 import connection
 import assets
 
 
-def lobby_init(is_host):
-    global game_manager, ui
+def lobby_init(_is_host):
+    global game_manager, ui, is_host
     ui = []
-    if is_host:
+    is_host = _is_host
+    if _is_host:
         game_manager = HostGameManager()
     else:
         game_manager = ClientGameManager()
 
 class GameManager():
-    def tick(self):
-        pass
+    pass
 
 class HostGameManager(GameManager):
     def __init__(self):
         global ui
         self.playing = False
+        self.player = Player()
+        players.append(self.player)
+        self.player.change_name(env["NAME"])
         self.players: list[connection.HostConnection] = []
 
         self.s = socket.socket()
@@ -48,11 +52,14 @@ class HostGameManager(GameManager):
 
         ui = [Button((100, 100), (320, 64), assets.sprites["ui"]["start.png"], self.start_game)]
 
+    def tick(self):
+        self.player.move((keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w]))
+
     def connection_accept(self):
         while True:
             c, addr = self.s.accept()
             print(f"Accepted connection from {addr}")
-            self.players.append(connection.HostConnection(c))
+            self.players.append(connection.HostConnection(c, Player()))
 
     def send(self, c: connection.HostConnection, data):
         c.c.send(f"{json.dumps(data)}§".encode())
@@ -63,12 +70,12 @@ class HostGameManager(GameManager):
         chunks = generate_world()
         chunks_string_list = []
         for chunk in chunks:
-            chunks_string_list.append( str(chunk) )
+            chunks_string_list.append(str(chunk))
 
         ui = []
         for player in self.players:
-            self.send(player, {"type": "load_chunks", "body": chunks_string_list})
             self.send(player, {"type": "start_game"})
+            #self.send(player, {"type": "load_chunks", "body": chunks_string_list})
 
 class ClientGameManager(GameManager):
     def __init__(self):
@@ -76,6 +83,9 @@ class ClientGameManager(GameManager):
         self.s.connect((env["IP"], env["PORT"]))
         self.connection = connection.ClientConnection(self.s)
         self.send({"type": "name_register", "body": env["NAME"]})
+
+    def tick(self):
+        self.connection.player.move((keys[pygame.K_d] - keys[pygame.K_a], keys[pygame.K_s] - keys[pygame.K_w]))
 
     def send(self, data):
         self.s.send(f"{json.dumps(data)}§".encode())
@@ -117,9 +127,16 @@ class Button(ButtonPrimitive):
 
 
 class Player():
-    def __init__(self, name):
+    def __init__(self):
         self.position = [0, 0]
+        self.name = "player"
+
+    def change_name(self, name):
         self.name = name
+
+    def move(self, velocity):
+        self.position[0] += velocity[0]
+        self.position[1] += velocity[1]
 
 
 chunks: list[Chunk] = []
@@ -137,7 +154,6 @@ def render_chunks(screen: pygame.Surface) -> None:
         chunk_entities: list[dict] = chunk.entities
         for terrain in chunk_terrain:
             spritePath = terrain["sprite"]
-            print(spritePath)
             sprite = assets.sprites[spritePath[0]][spritePath[1]]
             sprite_position = terrain["position"]
             screen.blit(sprite, sprite_position)
@@ -172,11 +188,12 @@ while running:
         game_manager.tick()
 
     if in_game:
-
         render_chunks(screen)
 
     for element in ui:
         element.tick()
+
+    print([x.position for x in players], end="\r")
 
     pygame.display.flip()
     clock.tick(60)
