@@ -5,6 +5,7 @@ import pygame
 import socket
 import json
 import sys
+import math
 
 with open("env.json") as f: env = json.loads(f.read())
 
@@ -12,7 +13,8 @@ IMAGE_SIZE = 64
 
 pygame.init()
 info = pygame.display.Info()
-screen = pygame.display.set_mode((info.current_w, info.current_h))
+screen_size = (info.current_w, info.current_h)
+screen = pygame.display.set_mode(screen_size)
 clock = pygame.time.Clock()
 
 game_manager: None | HostGameManager | ClientGameManager = None
@@ -42,6 +44,8 @@ class HostGameManager(GameManager):
         self.playing = False
         self.player = Player()
         self.player.change_name(env["NAME"])
+        self.player.change_ownership(True)
+        
         self.players: list[connection.HostConnection] = []
 
         self.s = socket.socket()
@@ -128,26 +132,46 @@ class Button(ButtonPrimitive):
 
 class Player():
     def __init__(self):
-        self.position = [0, 0]
-        self.name = "player"
+        self.position: list[int, int] = [0, 0]
+        self.name: str = "player"
+        self.is_me: bool = False
+        self.speed: float = 5
 
     def change_name(self, name):
         self.name = name
 
+    def change_ownership(self, do_we_own: bool = False):
+        self.is_me = do_we_own
+
     def move(self, velocity):
-        self.position[0] += velocity[0]
-        self.position[1] += velocity[1]
+        if self.is_me:
+            global camera_position
+            camera_position = self.position
+            print(camera_position)
+        
+        # += makes it inverted ;-;
+        self.position[0] -= velocity[0] * self.speed
+        self.position[1] -= velocity[1] * self.speed
 
 
+camera_position: list[int, int] = [0, 0]
 chunks: list[Chunk] = []
 
 def generate_world() -> list[Chunk]:
-    world_generator: WorldGeneration = WorldGeneration(2, 16, IMAGE_SIZE) # world is 32 chunks by 32 chunks; chunks are 16x16
+    world_generator: WorldGeneration = WorldGeneration(12, 16, IMAGE_SIZE) # world is 32 chunks by 32 chunks; chunks are 16x16
     return world_generator.world # just the entire world for now
 
 #chunks = generate_world()
 
+def offset_position(start: tuple[int, int], offset: tuple[int, int]) -> tuple[int, int]:
+    return (
+        start[0] + offset[0],
+        start[1] + offset[1],
+    )
+
 def render_chunks(screen: pygame.Surface) -> None:
+    max_dist = math.sqrt(screen_size[0] + screen_size[1])
+    
     for chunk in chunks:
         chunk_position: tuple[int, int] = chunk.position
         chunk_terrain: list[dict] = chunk.terrain
@@ -156,12 +180,14 @@ def render_chunks(screen: pygame.Surface) -> None:
             spritePath = terrain["sprite"]
             sprite = assets.sprites[spritePath[0]][spritePath[1]]
             sprite_position = terrain["position"]
-            screen.blit(sprite, sprite_position)
+            new_position = offset_position(sprite_position, camera_position)
+            screen.blit(sprite, new_position)
         for entity in chunk_entities:
             spritePath = terrain["sprite"]
             sprite = assets.sprites[spritePath[0]][spritePath[1]]
             sprite_position = entity["position"]
-            screen.blit(sprite, sprite_position)
+            new_position = offset_position(sprite_position, camera_position)
+            screen.blit(sprite, new_position)
 
 
 
