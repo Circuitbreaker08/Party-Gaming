@@ -158,7 +158,7 @@ camera_position: list[int, int] = [0, 0]
 chunks: list[Chunk] = []
 
 def generate_world() -> list[Chunk]:
-    world_generator: WorldGeneration = WorldGeneration(12, 16, IMAGE_SIZE) # world is 32 chunks by 32 chunks; chunks are 16x16
+    world_generator: WorldGeneration = WorldGeneration(4, 16, IMAGE_SIZE) # world is 32 chunks by 32 chunks; chunks are 16x16
     return world_generator.world # just the entire world for now
 
 #chunks = generate_world()
@@ -207,6 +207,7 @@ while running:
     for event in events:
         if event.type == pygame.QUIT:
             running = False
+            sys.exit()
 
     screen.fill((0, 0, 0))
 
