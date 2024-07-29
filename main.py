@@ -147,7 +147,6 @@ class Player():
         if self.is_me:
             global camera_position
             camera_position = self.position
-            print(camera_position)
         
         # += makes it inverted ;-;
         self.position[0] -= velocity[0] * self.speed
@@ -170,8 +169,6 @@ def offset_position(start: tuple[int, int], offset: tuple[int, int]) -> tuple[in
     )
 
 def render_chunks(screen: pygame.Surface) -> None:
-    max_dist = math.sqrt(screen_size[0] + screen_size[1])
-    
     for chunk in chunks:
         chunk_position: tuple[int, int] = chunk.position
         chunk_terrain: list[dict] = chunk.terrain
@@ -183,7 +180,7 @@ def render_chunks(screen: pygame.Surface) -> None:
             new_position = offset_position(sprite_position, camera_position)
             screen.blit(sprite, new_position)
         for entity in chunk_entities:
-            spritePath = terrain["sprite"]
+            spritePath = entity["sprite"]
             sprite = assets.sprites[spritePath[0]][spritePath[1]]
             sprite_position = entity["position"]
             new_position = offset_position(sprite_position, camera_position)
